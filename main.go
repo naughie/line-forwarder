@@ -34,6 +34,7 @@ type LINEObject struct {
 }
 
 type LINEEvent struct {
+    Type string `json:"type"`
     Source LINESource `json:"source"`
 }
 
@@ -117,6 +118,7 @@ func forward(token Token, botName string) func(echo.Context) error {
             log.Println(err)
         }
         for _, e := range obj.Events {
+            log.Println("    Type: ", e.Type)
             src := e.Source
             log.Println("    Source: ", src)
             user, err := getUser(src.UserID, token)
