@@ -5,6 +5,7 @@ import (
     "os"
     "encoding/json"
     "strings"
+    "bytes"
     "net/http"
     "net/url"
     "github.com/labstack/echo/v4"
@@ -87,11 +88,9 @@ func getUser(id string, token Token) (User, error) {
 }
 
 func sendToIFTTT(userName, botName string) error {
-    values := url.Values{}
-    values.Add("value1", userName)
-    values.Add("value2", botName)
+    values := []byte(`{"value1":"` + userName + `","value2":"` + botName + `"}`)
 
-    req, err := http.NewRequest("POST", "https://maker.ifttt.com/trigger/line_message_received/with/key/casHCp6Yws_4_TWkgcEkpU", strings.NewReader(values.Encode()))
+    req, err := http.NewRequest("POST", "https://maker.ifttt.com/trigger/line_message_received/with/key/casHCp6Yws_4_TWkgcEkpU", bytes.NewReader(values))
 
     if err != nil {
         return err
@@ -105,6 +104,8 @@ func sendToIFTTT(userName, botName string) error {
         return err
     }
     defer res.Body.Close()
+
+    log.Println("Response from IFTTT: ", res.Status)
     return nil
 }
 
