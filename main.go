@@ -116,19 +116,30 @@ func forward(token Token, botName string) func(echo.Context) error {
         obj := LINEObject{}
         if err := c.Bind(&obj); err != nil {
             log.Println(err)
+            return c.NoContent(http.StatusOK)
         }
         for _, e := range obj.Events {
             log.Println("    Type: ", e.Type)
+            if e.Type != "message" {
+                continue
+            }
+
             src := e.Source
             log.Println("    Source: ", src)
             user, err := getUser(src.UserID, token)
             if err != nil {
                 log.Println(err)
+                continue
             }
             log.Println("    DisplayName: ", user.DisplayName, ", BotName: ", botName)
+            if len(user.DisplayName) == 0 {
+                continue
+            }
+
             err = sendToIFTTT(user.DisplayName, botName)
             if err != nil {
                 log.Println(err)
+                continue
             }
         }
         log.Println("Done")
