@@ -148,5 +148,5 @@ func main() {
 
     e.POST("/assistancedu", forward(token, "休校塾"))
 
-    e.Logger.Fatal(e.Start(":80"))
+    e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
