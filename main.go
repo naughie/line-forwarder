@@ -142,6 +142,10 @@ func main() {
 
     e := echo.New()
 
+    e.GET("/healthcheck", func(c echo.Context) error {
+        return c.NoContent(http.StatusOK)
+    })
+
     e.POST("/assistancedu", forward(token, "休校塾"))
 
     e.Logger.Fatal(e.Start(":8080"))
